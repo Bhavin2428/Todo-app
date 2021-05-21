@@ -58,17 +58,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ["data"]
+  props: ["data"],
+  data: function data() {
+    return {
+      form: {
+        name: null
+      },
+      message: null
+    };
+  },
+  methods: {
+    submit: function submit() {
+      var _this = this;
+
+      this.$inertia.post('/new', this.form).then(function (response) {
+        console.log('a');
+        console.log(response);
+        _this.message = response.data.message;
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -215,27 +225,57 @@ var render = function() {
           _c("b-card", [
             _c("h3", [_vm._v("Add New")]),
             _vm._v(" "),
-            _c("p", [_vm._v(_vm._s(_vm.data))]),
-            _vm._v(" "),
-            _c("form", [
-              _c("div", { staticClass: "row" }, [
-                _c("div", { staticClass: "form-group col-md-9" }, [
-                  _c("input", {
-                    staticClass: "form-control col-md-9",
-                    attrs: { type: "text", id: "", placeholder: "Add Item" }
-                  })
-                ]),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary mb-2 pr-5 col-md-3",
-                    attrs: { type: "submit" }
-                  },
-                  [_vm._v("Add")]
-                )
-              ])
-            ])
+            _c(
+              "form",
+              {
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    return _vm.submit($event)
+                  }
+                }
+              },
+              [
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "form-group col-md-9" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.form.name,
+                          expression: "form.name"
+                        }
+                      ],
+                      staticClass: "form-control col-md-9",
+                      attrs: { type: "text", id: "", placeholder: "Add Item" },
+                      domProps: { value: _vm.form.name },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.form, "name", $event.target.value)
+                        }
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary mb-2 pr-5 col-md-3",
+                      attrs: { type: "submit" }
+                    },
+                    [_vm._v("Add")]
+                  )
+                ])
+              ]
+            )
+          ]),
+          _vm._v(" "),
+          _c("b-alert", { attrs: { variant: "success", show: "" } }, [
+            _vm._v(_vm._s(_vm.message))
           ]),
           _vm._v(" "),
           _c("b-card", { staticClass: "mt-5" }, [
@@ -250,65 +290,40 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _c("tbody", [
-                _c("tr", [
-                  _c("th", { attrs: { scope: "row" } }, [
-                    _c("div", { staticClass: "form-check" }, [
-                      _c("input", {
-                        staticClass: "form-check-input position-static",
-                        attrs: {
-                          type: "checkbox",
-                          id: "blankCheckbox",
-                          value: "option1",
-                          "aria-label": "..."
-                        }
-                      })
+              _c(
+                "tbody",
+                _vm._l(_vm.data, function(item) {
+                  return _c("tr", [
+                    _c("th", { attrs: { scope: "row" } }, [
+                      _c("div", { staticClass: "form-check" }, [
+                        _c("input", {
+                          staticClass: "form-check-input position-static",
+                          attrs: {
+                            type: "checkbox",
+                            id: "blankCheckbox",
+                            value: "option1",
+                            "aria-label": "..."
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(item.name))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-danger cust-delete",
+                          attrs: { type: "button" }
+                        },
+                        [_vm._v("Delete")]
+                      )
                     ])
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("Loreum Ipsum Text Here")]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-danger cust-delete",
-                        attrs: { type: "button" }
-                      },
-                      [_vm._v("Delete")]
-                    )
                   ])
-                ]),
-                _vm._v(" "),
-                _c("tr", [
-                  _c("th", { attrs: { scope: "row" } }, [
-                    _c("div", { staticClass: "form-check" }, [
-                      _c("input", {
-                        staticClass: "form-check-input position-static",
-                        attrs: {
-                          type: "checkbox",
-                          id: "blankCheckbox",
-                          value: "option1",
-                          "aria-label": "..."
-                        }
-                      })
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("Loreum Ipsum Text Here")]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-danger cust-delete",
-                        attrs: { type: "button" }
-                      },
-                      [_vm._v("Delete")]
-                    )
-                  ])
-                ])
-              ])
+                }),
+                0
+              )
             ])
           ])
         ],
