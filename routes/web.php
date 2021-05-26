@@ -16,4 +16,7 @@ use App\Http\Controllers\TodoControler;
 
 Route::get('/', [TodoControler::class, 'index'])->name('home');
 Route::post('/new', [TodoControler::class, 'new']);
+Route::post('/destroy', [TodoControler::class, 'destroy']);
+Route::post('/uncomplete', [TodoControler::class, 'uncomplete']);
+Route::post('/complete', [TodoControler::class, 'complete']);
 

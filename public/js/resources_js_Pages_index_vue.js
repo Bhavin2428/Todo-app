@@ -58,12 +58,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ["data"],
   data: function data() {
     return {
       form: {
-        name: null
+        name: null,
+        id: null
       },
       message: null
     };
@@ -77,6 +87,29 @@ __webpack_require__.r(__webpack_exports__);
         console.log(response);
         _this.message = response.data.message;
       });
+    },
+    destroy: function destroy(data) {
+      this.$inertia.post("/destroy", {
+        "id": data.id
+      });
+    },
+    check: function check(data) {
+      console.log('test');
+
+      if (data.completed) {
+        this.$inertia.post("/uncomplete", {
+          "id": data.id
+        });
+      } else {
+        this.$inertia.post("/complete", {
+          "id": data.id
+        });
+      }
+    }
+  },
+  computed: {
+    updatedCount: function updatedCount() {
+      return this.data.length;
     }
   }
 });
@@ -100,7 +133,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nh3{\nfont-size:17px;\nfont-weight:600;\n}\n.cust-delete{\n    padding:3px 5px 5px 5px ;\n    font-size:12px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nh3{\nfont-size:17px;\nfont-weight:600;\n}\n.cust-delete{\n    padding:3px 5px 5px 5px ;\n    font-size:12px;\n}\n.completed{\n    text-decoration:line-through;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -220,8 +253,6 @@ var render = function() {
         "div",
         { staticClass: "col-md-6 offset-md-3 mt-5 position-relative" },
         [
-          _c("h2", { staticClass: "mb-4" }, [_vm._v("Todo list")]),
-          _vm._v(" "),
           _c("b-card", [
             _c("h3", [_vm._v("Add New")]),
             _vm._v(" "),
@@ -247,8 +278,8 @@ var render = function() {
                           expression: "form.name"
                         }
                       ],
-                      staticClass: "form-control col-md-9",
-                      attrs: { type: "text", id: "", placeholder: "Add Item" },
+                      staticClass: "form-control",
+                      attrs: { type: "text", id: "", placeholder: "Add Todo" },
                       domProps: { value: _vm.form.name },
                       on: {
                         input: function($event) {
@@ -261,24 +292,24 @@ var render = function() {
                     })
                   ]),
                   _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary mb-2 pr-5 col-md-3",
-                      attrs: { type: "submit" }
-                    },
-                    [_vm._v("Add")]
-                  )
+                  _c("div", { staticClass: "col-md-3" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary w-100",
+                        attrs: { type: "submit" }
+                      },
+                      [_vm._v("Add")]
+                    )
+                  ])
                 ])
               ]
             )
           ]),
           _vm._v(" "),
-          _c("b-alert", { attrs: { variant: "success", show: "" } }, [
-            _vm._v(_vm._s(_vm.message))
-          ]),
+          _c("h2", { staticClass: "mt-4" }, [_vm._v("Todo list")]),
           _vm._v(" "),
-          _c("b-card", { staticClass: "mt-5" }, [
+          _c("b-card", { staticClass: "mt-2" }, [
             _c("table", { staticClass: "table" }, [
               _c("thead", [
                 _c("tr", [
@@ -301,21 +332,36 @@ var render = function() {
                           attrs: {
                             type: "checkbox",
                             id: "blankCheckbox",
-                            value: "option1",
+                            value: "",
                             "aria-label": "..."
+                          },
+                          domProps: { checked: item.completed },
+                          on: {
+                            change: function($event) {
+                              return _vm.check(item)
+                            }
                           }
                         })
                       ])
                     ]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(item.name))]),
+                    _c("td", [
+                      _c("span", { class: { completed: item.completed } }, [
+                        _vm._v(_vm._s(item.name) + " ")
+                      ])
+                    ]),
                     _vm._v(" "),
                     _c("td", [
                       _c(
                         "button",
                         {
                           staticClass: "btn btn-danger cust-delete",
-                          attrs: { type: "button" }
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.destroy(item)
+                            }
+                          }
                         },
                         [_vm._v("Delete")]
                       )
@@ -324,8 +370,29 @@ var render = function() {
                 }),
                 0
               )
-            ])
-          ])
+            ]),
+            _vm._v(" "),
+            _c("strong", [_vm._v(_vm._s(_vm.updatedCount))]),
+            _vm._v(" : Total Number of Todo\n            ")
+          ]),
+          _vm._v(" "),
+          _vm.$page.props.session.type === "success"
+            ? _c("b-alert", { attrs: { variant: "success", show: "" } }, [
+                _vm._v(_vm._s(_vm.$page.props.session.message))
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.$page.props.session.type === "danger"
+            ? _c("b-alert", { attrs: { variant: "danger", show: "" } }, [
+                _vm._v(_vm._s(_vm.$page.props.session.message))
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.$page.props.session.type === "warning"
+            ? _c("b-alert", { attrs: { variant: "warning", show: "" } }, [
+                _vm._v(_vm._s(_vm.$page.props.session.message))
+              ])
+            : _vm._e()
         ],
         1
       )
