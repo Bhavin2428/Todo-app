@@ -44,11 +44,11 @@
                     </table>
                     <strong>{{ updatedCount }}</strong> : Total Number of Todo
                 </b-card>
-
-                <b-alert variant="success" v-if="$page.props.session.type === 'success'" show>{{$page.props.session.message}}</b-alert>
-                <b-alert variant="danger" v-if="$page.props.session.type === 'danger'" show>{{$page.props.session.message}}</b-alert>
-                <b-alert variant="warning" v-if="$page.props.session.type === 'warning'" show>{{$page.props.session.message}}</b-alert>
-
+                <div id="status-message">
+                    <b-alert variant="success" v-show="elementShow" v-if="$page.props.session.type === 'success'" show>{{$page.props.session.message}}</b-alert>
+                    <b-alert variant="danger" v-show="elementShow" v-if="$page.props.session.type === 'danger'" show>{{$page.props.session.message}}</b-alert>
+                    <b-alert variant="warning" v-show="elementShow" v-if="$page.props.session.type === 'warning'" show>{{$page.props.session.message}}</b-alert>
+                </div>
             </div>
         </div>
     </div>
@@ -58,25 +58,43 @@
     export default {
         props:["data"],
 
+        
         data() {
             return {
+                elementShow: true,
+
                 form:{
                     name:null,
                     id:null,
                 },
 
                 message:null,
+                messageTimeout: null,
+            }            
+        },
+
+        watch: {
+            message: function(msg){
+                this.elementShow = true;
+                const timer = 5000; 
+                 
+                if (this.messageTimeout) {
+                    clearTimeout(this.messageTimeout);
+                }
+
+                   this.messageTimeout=window.setTimeout(() => {
+                    this.toggleStatus()
+                }, timer);
             }
         },
 
          methods: {
             submit() {
-                this.$inertia.post('/new', this.form)
-                .then(response => {
-                    console.log('a');
-                    console.log(response);
-                    this.message=response.data.message;
-                });
+                this.$inertia.post('/new', this.form, {
+                    onSuccess: (response) => {
+                        this.message=response.message;
+                    },
+                })
             },
 
             destroy: function(data) {
@@ -86,11 +104,25 @@
             check: function(data) {
                 console.log('test')
                 if (data.completed) {
-                    this.$inertia.post("/uncomplete",{"id" :data.id});
+                    this.$inertia.post("/uncomplete",{"id" :data.id}, {
+                    onSuccess: (response) => {
+                        console.log("uncompleted");
+                        this.message=response.message;
+                    },
+                });
                 }
                 else {
-                    this.$inertia.post("/complete",{"id" :data.id});    
+                    this.$inertia.post("/complete",{"id" :data.id}, {
+                    onSuccess: (response) => {
+                        console.log("completed");
+                        this.message=response.message;
+                    },
+                });    
                 }
+            },
+
+            toggleStatus: function() {
+                this.elementShow=!this.elementShow;
             },
         },
 
@@ -98,7 +130,9 @@
             updatedCount: function() {
                 return this.data.length;
             }
-        }
+        },
+
+        
     }
 </script>
 
@@ -117,4 +151,14 @@
     .completed{
         text-decoration:line-through;
     }
+
+    .show{
+        display:block !important;
+    }
+
+    .hide{
+        display:none !important;
+    }
+
+
 </style>

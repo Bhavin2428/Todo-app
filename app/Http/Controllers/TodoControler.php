@@ -14,8 +14,7 @@ class TodoControler extends Controller {
 
     public function new(Request $request) {
         Todo::create($request->all());
-        return back()->with(['message' => 'New Todo is added in List', 'type' => 'success']);
-        
+        return back()->with(['message' => 'New Todo is added in List', 'type' => 'success']);  
     }
 
     public function destroy(Request $request) {

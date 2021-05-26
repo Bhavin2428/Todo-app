@@ -71,21 +71,39 @@ __webpack_require__.r(__webpack_exports__);
   props: ["data"],
   data: function data() {
     return {
+      elementShow: true,
       form: {
         name: null,
         id: null
       },
-      message: null
+      message: null,
+      messageTimeout: null
     };
+  },
+  watch: {
+    message: function message(msg) {
+      var _this = this;
+
+      this.elementShow = true;
+      var timer = 5000;
+
+      if (this.messageTimeout) {
+        clearTimeout(this.messageTimeout);
+      }
+
+      this.messageTimeout = window.setTimeout(function () {
+        _this.toggleStatus();
+      }, timer);
+    }
   },
   methods: {
     submit: function submit() {
-      var _this = this;
+      var _this2 = this;
 
-      this.$inertia.post('/new', this.form).then(function (response) {
-        console.log('a');
-        console.log(response);
-        _this.message = response.data.message;
+      this.$inertia.post('/new', this.form, {
+        onSuccess: function onSuccess(response) {
+          _this2.message = response.message;
+        }
       });
     },
     destroy: function destroy(data) {
@@ -94,17 +112,32 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     check: function check(data) {
+      var _this3 = this;
+
       console.log('test');
 
       if (data.completed) {
         this.$inertia.post("/uncomplete", {
           "id": data.id
+        }, {
+          onSuccess: function onSuccess(response) {
+            console.log("uncompleted");
+            _this3.message = response.message;
+          }
         });
       } else {
         this.$inertia.post("/complete", {
           "id": data.id
+        }, {
+          onSuccess: function onSuccess(response) {
+            console.log("completed");
+            _this3.message = response.message;
+          }
         });
       }
+    },
+    toggleStatus: function toggleStatus() {
+      this.elementShow = !this.elementShow;
     }
   },
   computed: {
@@ -133,7 +166,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nh3{\nfont-size:17px;\nfont-weight:600;\n}\n.cust-delete{\n    padding:3px 5px 5px 5px ;\n    font-size:12px;\n}\n.completed{\n    text-decoration:line-through;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nh3{\nfont-size:17px;\nfont-weight:600;\n}\n.cust-delete{\n    padding:3px 5px 5px 5px ;\n    font-size:12px;\n}\n.completed{\n    text-decoration:line-through;\n}\n.show{\n    display:block !important;\n}\n.hide{\n    display:none !important;\n}\n\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -376,23 +409,66 @@ var render = function() {
             _vm._v(" : Total Number of Todo\n            ")
           ]),
           _vm._v(" "),
-          _vm.$page.props.session.type === "success"
-            ? _c("b-alert", { attrs: { variant: "success", show: "" } }, [
-                _vm._v(_vm._s(_vm.$page.props.session.message))
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.$page.props.session.type === "danger"
-            ? _c("b-alert", { attrs: { variant: "danger", show: "" } }, [
-                _vm._v(_vm._s(_vm.$page.props.session.message))
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.$page.props.session.type === "warning"
-            ? _c("b-alert", { attrs: { variant: "warning", show: "" } }, [
-                _vm._v(_vm._s(_vm.$page.props.session.message))
-              ])
-            : _vm._e()
+          _c(
+            "div",
+            { attrs: { id: "status-message" } },
+            [
+              _vm.$page.props.session.type === "success"
+                ? _c(
+                    "b-alert",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.elementShow,
+                          expression: "elementShow"
+                        }
+                      ],
+                      attrs: { variant: "success", show: "" }
+                    },
+                    [_vm._v(_vm._s(_vm.$page.props.session.message))]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.$page.props.session.type === "danger"
+                ? _c(
+                    "b-alert",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.elementShow,
+                          expression: "elementShow"
+                        }
+                      ],
+                      attrs: { variant: "danger", show: "" }
+                    },
+                    [_vm._v(_vm._s(_vm.$page.props.session.message))]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.$page.props.session.type === "warning"
+                ? _c(
+                    "b-alert",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.elementShow,
+                          expression: "elementShow"
+                        }
+                      ],
+                      attrs: { variant: "warning", show: "" }
+                    },
+                    [_vm._v(_vm._s(_vm.$page.props.session.message))]
+                  )
+                : _vm._e()
+            ],
+            1
+          )
         ],
         1
       )
