@@ -19,4 +19,5 @@ Route::post('/new', [TodoControler::class, 'new']);
 Route::post('/destroy', [TodoControler::class, 'destroy']);
 Route::post('/uncomplete', [TodoControler::class, 'uncomplete']);
 Route::post('/complete', [TodoControler::class, 'complete']);
+// Route::put('complete/{id}', 'TodoControler@complete');
 

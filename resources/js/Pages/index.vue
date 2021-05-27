@@ -42,7 +42,7 @@
                             
                         </tbody>
                     </table>
-                    <strong>{{ updatedCount }}</strong> : Total Number of Todo
+                    <todo-item :data="data" />: Total Number of Todo
                 </b-card>
                 <div id="status-message">
                     <b-alert variant="success" v-show="elementShow" v-if="$page.props.session.type === 'success'" show>{{$page.props.session.message}}</b-alert>
@@ -55,7 +55,13 @@
 </template>
 
 <script>
+
+import  TodoItem from '../components/todoitem'
     export default {
+components:{
+TodoItem
+},
+
         props:["data"],
 
         
@@ -101,18 +107,38 @@
                 this.$inertia.post("/destroy", {"id": data.id});
             },
 
+            // check: function(data) {
+            //     console.log('test')
+            //     if (data.completed) {
+            //         this.$inertia.post("/uncomplete",{"id" :data.id}, {
+            //         onSuccess: (response) => {
+                       
+            //             this.message=response.message;
+            //         },
+            //     });
+            //     }
+            //     else {
+            //         this.$inertia.post("/complete",{"id" :data.id}, {
+            //         onSuccess: (response) => {
+            //             console.log("completed");
+            //             this.message=response.message;
+            //         },
+            //     });    
+            //     }
+            // },
+
             check: function(data) {
                 console.log('test')
                 if (data.completed) {
-                    this.$inertia.post("/uncomplete",{"id" :data.id}, {
+                    this.$inertia.post("/complete",{"id" :data.id , 'text' : "complete"}, {
                     onSuccess: (response) => {
-                        console.log("uncompleted");
+                       
                         this.message=response.message;
                     },
                 });
                 }
                 else {
-                    this.$inertia.post("/complete",{"id" :data.id}, {
+                    this.$inertia.post("/complete",{"id" :data.id , 'text' : "Uncomplete"}, {
                     onSuccess: (response) => {
                         console.log("completed");
                         this.message=response.message;
@@ -126,11 +152,11 @@
             },
         },
 
-        computed: {
-            updatedCount: function() {
-                return this.data.length;
-            }
-        },
+        // computed: {
+        //     updatedCount: function() {
+        //         return this.data.length;
+        //     }
+        // },
 
         
     }
