@@ -91,7 +91,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.elementShow = true;
-      var timer = 5000;
+      var timer = 50000;
 
       if (this.messageTimeout) {
         clearTimeout(this.messageTimeout);
@@ -117,60 +117,20 @@ __webpack_require__.r(__webpack_exports__);
         "id": data.id
       });
     },
-    // check: function(data) {
-    //     console.log('test')
-    //     if (data.completed) {
-    //         this.$inertia.post("/uncomplete",{"id" :data.id}, {
-    //         onSuccess: (response) => {
-    //             this.message=response.message;
-    //         },
-    //     });
-    //     }
-    //     else {
-    //         this.$inertia.post("/complete",{"id" :data.id}, {
-    //         onSuccess: (response) => {
-    //             console.log("completed");
-    //             this.message=response.message;
-    //         },
-    //     });    
-    //     }
-    // },
     check: function check(data) {
       var _this3 = this;
 
-      console.log('test');
-      console.log(data.completed);
-
-      if (data.completed) {
-        this.$inertia.post("/complete", {
-          "id": data.id,
-          'text': "complete"
-        }, {
-          onSuccess: function onSuccess(response) {
-            _this3.message = response.message;
-          }
-        });
-      } else if (!data.completed) {
-        this.$inertia.post("/complete", {
-          "id": data.id,
-          'text': "uncomplete"
-        }, {
-          onSuccess: function onSuccess(response) {
-            console.log("completed");
-            _this3.message = response.message;
-          }
-        });
-      }
+      //event.preventDefault();
+      this.$inertia.post("/complete", data, {
+        onSuccess: function onSuccess(response) {
+          _this3.message = response.message;
+        }
+      });
     },
     toggleStatus: function toggleStatus() {
       this.elementShow = !this.elementShow;
     }
-  } // computed: {
-  //     updatedCount: function() {
-  //         return this.data.length;
-  //     }
-  // },
-
+  }
 });
 
 /***/ }),

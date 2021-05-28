@@ -83,7 +83,7 @@ import  TodoItem from '../components/todoitem'
         watch: {
             message: function(msg){
                 this.elementShow = true;
-                const timer = 5000; 
+                const timer = 50000; 
                  
                 if (this.messageTimeout) {
                     clearTimeout(this.messageTimeout);
@@ -108,46 +108,13 @@ import  TodoItem from '../components/todoitem'
                 this.$inertia.post("/destroy", {"id": data.id});
             },
 
-            // check: function(data) {
-            //     console.log('test')
-            //     if (data.completed) {
-            //         this.$inertia.post("/uncomplete",{"id" :data.id}, {
-            //         onSuccess: (response) => {
-                       
-            //             this.message=response.message;
-            //         },
-            //     });
-            //     }
-            //     else {
-            //         this.$inertia.post("/complete",{"id" :data.id}, {
-            //         onSuccess: (response) => {
-            //             console.log("completed");
-            //             this.message=response.message;
-            //         },
-            //     });    
-            //     }
-            // },
-
             check: function(data) {
-                console.log('test')
-                 console.log(data.completed)
-
-                if (data.completed) {
-                        this.$inertia.post("/complete",{"id" :data.id , 'text' : "complete"}, {
-                        onSuccess: (response) => {
-                        
-                            this.message=response.message;
-                        },
-                    });
-                }
-                else if (!data.completed) {
-                        this.$inertia.post("/complete",{"id" :data.id , 'text' : "uncomplete"}, {
-                        onSuccess: (response) => {
-                            console.log("completed");
-                            this.message=response.message;
-                        },
-                    });    
-                }
+                //event.preventDefault();
+                this.$inertia.post("/complete", data, {
+                    onSuccess: (response) => {
+                        this.message=response.message;
+                    },
+                });
             },
 
             toggleStatus: function() {
@@ -155,13 +122,6 @@ import  TodoItem from '../components/todoitem'
             },
         },
 
-        // computed: {
-        //     updatedCount: function() {
-        //         return this.data.length;
-        //     }
-        // },
-
-        
     }
 </script>
 

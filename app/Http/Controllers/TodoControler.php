@@ -26,23 +26,15 @@ class TodoControler extends Controller {
 
     public function complete(Request $request){
           // dd($request);
-        if ($request->text =="complete"){
-            Todo::find($request->input('id'))->update(['completed' => true]);
+          Todo::find($request->input('id'))->update(['completed' => $request->completed]);
+       
+          if ($request->completed){
+            
                return back()->with(['message' => 'Work Completed', 'type' => 'warning']);
         }
-            elseif ($request->text =="uncomplete"){
+            else{
                 return back()->with(['message' => 'Work Uncomplet', 'type' => 'warning']);
             }
        }
-
-    // public function uncomplete(Request $request){
-    //     Todo::find($request->input('id'))->update(['completed' => false]);
-    //     return back()->with(['message' => 'Work Uncomplet', 'type' => 'warning']);
-    // }
-
-    // public function complete(Request $request){
-    //     Todo::find($request->input('id'))->update(['completed' => true]);
-    //     return back()->with(['message' => 'Work Completed', 'type' => 'warning']);
-    // }
 
 }
