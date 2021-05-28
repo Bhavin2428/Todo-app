@@ -79,7 +79,8 @@ __webpack_require__.r(__webpack_exports__);
       elementShow: true,
       form: {
         name: null,
-        id: null
+        id: null,
+        completed: false
       },
       message: null,
       messageTimeout: null
@@ -138,6 +139,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       console.log('test');
+      console.log(data.completed);
 
       if (data.completed) {
         this.$inertia.post("/complete", {
@@ -148,10 +150,10 @@ __webpack_require__.r(__webpack_exports__);
             _this3.message = response.message;
           }
         });
-      } else {
+      } else if (!data.completed) {
         this.$inertia.post("/complete", {
           "id": data.id,
-          'text': "Uncomplete"
+          'text': "uncomplete"
         }, {
           onSuccess: function onSuccess(response) {
             console.log("completed");
@@ -218,7 +220,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nh3{\nfont-size:17px;\nfont-weight:600;\n}\n.cust-delete{\n    padding:3px 5px 5px 5px ;\n    font-size:12px;\n}\n.completed{\n    text-decoration:line-through;\n}\n.show{\n    display:block !important;\n}\n.hide{\n    display:none !important;\n}\n\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nh3{\n    font-size:17px;\n    font-weight:600;\n}\n.cust-delete{\n    padding:3px 5px 5px 5px ;\n    font-size:12px;\n}\n.completed{\n    text-decoration:line-through;\n}\n.show{\n    display:block !important;\n}\n.hide{\n    display:none !important;\n}\n\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -488,6 +490,14 @@ var render = function() {
                       _c("th", { attrs: { scope: "row" } }, [
                         _c("div", { staticClass: "form-check" }, [
                           _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: item.completed,
+                                expression: "item.completed"
+                              }
+                            ],
                             staticClass: "form-check-input position-static",
                             attrs: {
                               type: "checkbox",
@@ -495,11 +505,46 @@ var render = function() {
                               value: "",
                               "aria-label": "..."
                             },
-                            domProps: { checked: item.completed },
+                            domProps: {
+                              checked: item.completed,
+                              checked: Array.isArray(item.completed)
+                                ? _vm._i(item.completed, "") > -1
+                                : item.completed
+                            },
                             on: {
-                              change: function($event) {
-                                return _vm.check(item)
-                              }
+                              change: [
+                                function($event) {
+                                  var $$a = item.completed,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = "",
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        _vm.$set(
+                                          item,
+                                          "completed",
+                                          $$a.concat([$$v])
+                                        )
+                                    } else {
+                                      $$i > -1 &&
+                                        _vm.$set(
+                                          item,
+                                          "completed",
+                                          $$a
+                                            .slice(0, $$i)
+                                            .concat($$a.slice($$i + 1))
+                                        )
+                                    }
+                                  } else {
+                                    _vm.$set(item, "completed", $$c)
+                                  }
+                                },
+                                function($event) {
+                                  return _vm.check(item)
+                                }
+                              ]
                             }
                           })
                         ])

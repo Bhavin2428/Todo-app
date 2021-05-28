@@ -33,7 +33,7 @@
                             <tr v-for="item in data">
                                 <th scope="row">
                                     <div class="form-check">
-                                        <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" value="" @change="check(item)" :checked="item.completed" aria-label="...">
+                                        <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" value="" @change="check(item)" v-model="item.completed" :checked="item.completed" aria-label="...">
                                     </div>
                                 </th>
                                 <td><span v-bind:class="{ completed: item.completed }">{{item.name}} </span></td>
@@ -58,9 +58,9 @@
 
 import  TodoItem from '../components/todoitem'
     export default {
-components:{
-TodoItem
-},
+        components:{
+            TodoItem
+        },
 
         props:["data"],
 
@@ -72,6 +72,7 @@ TodoItem
                 form:{
                     name:null,
                     id:null,
+                    completed:false,
                 },
 
                 message:null,
@@ -129,21 +130,23 @@ TodoItem
 
             check: function(data) {
                 console.log('test')
+                 console.log(data.completed)
+
                 if (data.completed) {
-                    this.$inertia.post("/complete",{"id" :data.id , 'text' : "complete"}, {
-                    onSuccess: (response) => {
-                       
-                        this.message=response.message;
-                    },
-                });
+                        this.$inertia.post("/complete",{"id" :data.id , 'text' : "complete"}, {
+                        onSuccess: (response) => {
+                        
+                            this.message=response.message;
+                        },
+                    });
                 }
-                else {
-                    this.$inertia.post("/complete",{"id" :data.id , 'text' : "Uncomplete"}, {
-                    onSuccess: (response) => {
-                        console.log("completed");
-                        this.message=response.message;
-                    },
-                });    
+                else if (!data.completed) {
+                        this.$inertia.post("/complete",{"id" :data.id , 'text' : "uncomplete"}, {
+                        onSuccess: (response) => {
+                            console.log("completed");
+                            this.message=response.message;
+                        },
+                    });    
                 }
             },
 
@@ -165,8 +168,8 @@ TodoItem
 <style lang="css">
 
     h3{
-    font-size:17px;
-    font-weight:600;
+        font-size:17px;
+        font-weight:600;
     }
 
     .cust-delete{
